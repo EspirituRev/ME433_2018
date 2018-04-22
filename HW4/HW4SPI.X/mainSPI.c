@@ -43,7 +43,7 @@
 void init_spi(void){
     SPI1CON = 0;
     SPI1BUF;                 // clear rx buffer
-    SPI1BRG = 0x1000;
+    SPI1BRG = 4;
     //0x1000;        // baud rate compatible with nScope
     SPI1STATbits.SPIROV = 0; // clear overflow bit
     SPI1CONbits.CKE = 1;     // change voltage output when clk active -> idle
@@ -54,9 +54,9 @@ void init_spi(void){
     //set cs pin as output
     TRISAbits.TRISA0 = 0; //hook up CS wire to A0(Pin 2)
            
-    SDI1Rbits.SDI1R = 0x0;// RPA1 (Pin 3) as SDI1 Master input
-    ANSELBbits.ANSB13 = 0; // Disable analog
-    RPB13Rbits.RPB13R = 0b0011; // RPB13 as SDO1 Master output
+    SDI1Rbits.SDI1R = 0x0001;// RPA1 (Pin 3) as SDI1 Master input
+    ANSELAbits.ANSA1 = 0; // Disable analog
+    RPA1Rbits.RPA1R = 0b0011; // RPB13 as SDO1 Master output
     // RPB14 is fixed to SCK1 for SPI1    
 }
 
@@ -112,50 +112,47 @@ int main(void)
     //__builtin_enable_interrupts();
     
     init_spi();
-    int count1=0;
-    int count2=0;
+    float count1=1;
+    float count2=1;
     float v1=0;
     float v2=0;
     float pi=3.121;
+    float steps = 100.0;
     
     __builtin_enable_interrupts();
     
     while(1) 
     {
         _CP0_SET_COUNT(0);
-//        count1=count1+1;
-//        if (count1<100)
-//        {
-//            v1=512.0*sin(2.0*pi*count1/100.0);
-//            setVoltage(0,v1);
-//        }
-//        else
-//        {
-//            count2=0;
-//            v1=0.0;
-//            setVoltage(0,v1);
-//        }
-//        count2=count2+1;
-//        if (count1<100)
-//        {
-//            v2=512.0*count2/100.0;
-//            setVoltage(0,v2);
-//        }
-//        if (count2>100)
-//        {
-//            v2=-512.0*(count2-100.0)/100.0;
-//            setVoltage(0,v2);
-//        }
-//        if (count2==200)
-//        {
-//            count2=0;
-//            v2=0;
-//            setVoltage(0,v2);
-//        }
-        //setVoltage(0,512);
-        setVoltage(0,3*1024/4);
-        setVoltage(1,1024/4);
-        while(_CP0_GET_COUNT()<24000000/100)
+        count1=count1+1.0;
+        v1=floor(512.0*(cos(2.0*pi*count1/steps)+1));
+            setVoltage(0,v1);
+        if (count1>steps)
+        {
+            count1=0;
+            //v1=0.0;
+            
+        }
+        count2=count2+1;
+        if (count2==2*steps)
+        {
+            setVoltage(1,v2);
+            count2=0;
+            v2=0;
+            
+        }   
+        if (count2<steps)
+        {
+            v2=1024.0*count2/steps;
+            setVoltage(1,v2);
+        }
+        if (count2>steps)
+        {
+            v2=-1024.0*(count2-steps)/steps;
+            setVoltage(1,v2);
+        }
+            
+        while(_CP0_GET_COUNT()<24000000/1000)
     {
         
     }
