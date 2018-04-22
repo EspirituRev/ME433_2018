@@ -38,14 +38,31 @@
 #pragma config FUSBIDIO = ON // USB pins controlled by USB module
 #pragma config FVBUSONIO = ON // USB BUSON controlled by USB module
 
-#define TEST1   LATAbits.LATA4
-#define PB1     PORTBbits.RB4
 #define CS      LATAbits.LATA0
-#define SHDN    LATBbits.LATB9 = 0
+
+void init_spi(void){
+    SPI1CON = 0;
+    SPI1BUF;                 // clear rx buffer
+    SPI1BRG = 0x1000;
+    //0x1000;        // baud rate compatible with nScope
+    SPI1STATbits.SPIROV = 0; // clear overflow bit
+    SPI1CONbits.CKE = 1;     // change voltage output when clk active -> idle
+    SPI1CONbits.CKP = 0;     // clk active when high
+    SPI1CONbits.MSTEN = 1;    
+    SPI1CONbits.ON = 1;
+
+    //set cs pin as output
+    TRISAbits.TRISA0 = 0; //hook up CS wire to A0(Pin 2)
+           
+    SDI1Rbits.SDI1R = 0x0;// RPA1 (Pin 3) as SDI1 Master input
+    ANSELBbits.ANSB13 = 0; // Disable analog
+    RPB13Rbits.RPB13R = 0b0011; // RPB13 as SDO1 Master output
+    // RPB14 is fixed to SCK1 for SPI1    
+}
 
 
-unsigned char spi_io(unsigned char o) {
-  SPI1BUF = o;
+char spi_io(unsigned char c) {
+  SPI1BUF = c;
   while(!SPI1STATbits.SPIRBF) { // wait to receive the byte
     ;
   }
@@ -54,45 +71,25 @@ unsigned char spi_io(unsigned char o) {
 
 void setVoltage(char a, int V)
 {
-    unsigned char t;
-    t=a<<15;
-    t=t | 0b0111000000000000;
-    t=t | ((V&0b1111111111111111)<<2);
-    
+     short data = 0b0000000000000000;
+	data |= a << 15;			// puts channel in the 16th bit by shifting it by 15
+    data |= 0b111 << 12;			// makes next three bits 1 by bit-shifting them by 12
+    data |= V << 2; 			// voltage stored in the next 8 bits
+	
     CS = 0;
-    
-    t = spi_io(t>>10);
-    t = spi_io(t);
-    
+    //data=0b0110000011110110;
+	spi_io(data >> 8);
+	spi_io(data);
+    //spi_io(data);
     CS = 1;
     
 }
 
-void init_spi()
-{
-  TRISAbits.TRISA0 = 0;
-  CS = 1;
 
-  // Master - SPI4, pins are: SDI4(F4), SDO4(F5), SCK4(F13).  
-  // we manually control SS4 as a digital output (F12)
-  // since the pic is just starting, we know that spi is off. We rely on defaults here
- 
-  // setup spi1
-  SPI1CON = 0;              // turn off the spi module and reset it
-  SPI1BUF;                  // clear the rx buffer by reading from it
-  SPI1BRG = 0x3;            // baud rate to 10 MHz [SPI4BRG = (80000000/(2*desired))-1]
-  SPI1STATbits.SPIROV = 0;  // clear the overflow bit
-  SPI1CONbits.CKE = 1;      // data changes when clock goes from hi to lo (since CKP is 0)
-  SPI1CONbits.MSTEN = 1;    // master operation
-  SPI1CONbits.ON = 1;       // turn on spi 4
-    
-    
-}
 
 int main(void) 
 {
-    init_spi();
-    
+      
     __builtin_disable_interrupts();
 
     // set the CP0 CONFIG register to indicate that kseg0 is cacheable (0x3)
@@ -108,53 +105,57 @@ int main(void)
     DDPCONbits.JTAGEN = 0;
 
     // do your TRIS and LAT commands here
-    TRISAbits.TRISA4 = 0;
+    //TRISAbits.TRISA4 = 0;
     
-    TRISBbits.TRISB4 = 1;
+    //TRISBbits.TRISB4 = 1;
     
-    __builtin_enable_interrupts();
+    //__builtin_enable_interrupts();
     
+    init_spi();
     int count1=0;
     int count2=0;
     float v1=0;
     float v2=0;
     float pi=3.121;
     
+    __builtin_enable_interrupts();
+    
     while(1) 
     {
         _CP0_SET_COUNT(0);
-        count1=count1+1;
-        if (count1<100)
-        {
-            v1=512.0*sin(2.0*pi*count1/100.0);
-            setVoltage(0,v1);
-        }
-        else
-        {
-            count2=0;
-            v1=0.0;
-            setVoltage(0,v1);
-        }
-        count2=count2+1;
-        if (count1<100)
-        {
-            v2=512.0*count2/100.0;
-            setVoltage(0,v2);
-        }
-        if (count2>100)
-        {
-            v2=-512.0*(count2-100.0)/100.0;
-            setVoltage(0,v2);
-        }
-        if (count2==200)
-        {
-            count2=0;
-            v2=0;
-            setVoltage(0,v2);
-        }
-        setVoltage(0,512/2);
-        setVoltage(1,512/4);
-        while(_CP0_GET_COUNT()<24000000/1000)
+//        count1=count1+1;
+//        if (count1<100)
+//        {
+//            v1=512.0*sin(2.0*pi*count1/100.0);
+//            setVoltage(0,v1);
+//        }
+//        else
+//        {
+//            count2=0;
+//            v1=0.0;
+//            setVoltage(0,v1);
+//        }
+//        count2=count2+1;
+//        if (count1<100)
+//        {
+//            v2=512.0*count2/100.0;
+//            setVoltage(0,v2);
+//        }
+//        if (count2>100)
+//        {
+//            v2=-512.0*(count2-100.0)/100.0;
+//            setVoltage(0,v2);
+//        }
+//        if (count2==200)
+//        {
+//            count2=0;
+//            v2=0;
+//            setVoltage(0,v2);
+//        }
+        //setVoltage(0,512);
+        setVoltage(0,3*1024/4);
+        setVoltage(1,1024/4);
+        while(_CP0_GET_COUNT()<24000000/100)
     {
         
     }
@@ -164,4 +165,3 @@ int main(void)
 	// remember the core timer runs at half the sysclk
             
 }
-
