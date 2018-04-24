@@ -124,16 +124,16 @@ int main(void)
     while(1) 
     {
         _CP0_SET_COUNT(0);
-        count1=count1+1.0;
-        v1=floor(512.0*(cos(2.0*pi*count1/steps)+1));
+        count2=count2+1.0;
+        v1=floor(512.0*(cos(2.0*pi*count2/steps)+1));
             setVoltage(0,v1);
-        if (count1>steps)
+        if (count2>2*steps)
         {
             count1=0;
             //v1=0.0;
             
         }
-        count2=count2+1;
+        //count2=count2+1;
         if (count2==2*steps)
         {
             setVoltage(1,v2);

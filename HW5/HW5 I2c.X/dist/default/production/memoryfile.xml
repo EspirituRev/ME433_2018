@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?> 
 <project>                                  
-  <executable name="dist/default/production/HW4SPI.X.production.elf">                 
+  <executable name="dist/default/production/HW5_I2c.X.production.elf">                 
     <memory name="program">                 
       <units>bytes</units>                 
       <length>132240</length>                 
-      <used>5488</used>                     
-      <free>126752</free>                     
+      <used>3332</used>                     
+      <free>128908</free>                     
     </memory>                              
     <memory name="data">              
       <units>bytes</units>                 
       <length>32768</length>                 
-      <used>36</used>                     
-      <free>32732</free>                     
+      <used>0</used>                     
+      <free>32768</free>                     
     </memory>                              
   </executable>                            
 </project>                                 
