@@ -248,7 +248,7 @@ void LCD_clearScreen(unsigned short color) {
 	}
 }
 
-void LCD_drawchar(unsigned char x, unsigned char y, unsigned char mess, unsigned short coloron, unsigned short coloroff){
+void LCD_drawChar(unsigned char x, unsigned char y, unsigned char mess, unsigned short coloron, unsigned short coloroff){
     int col=0; char pixels; int j;
     for(col=0;col<5;col++){
         pixels=ASCII[mess-0x20][col];
@@ -259,6 +259,23 @@ void LCD_drawchar(unsigned char x, unsigned char y, unsigned char mess, unsigned
             else{
                 LCD_drawPixel(x+col,y+j,coloroff);
             }
+        }
+    }
+}
+
+void LCD_drawString(unsigned char x, unsigned char y, unsigned char* message, unsigned short color_on, unsigned short color_off){
+    int i=0;
+    while (message[i]){
+        LCD_drawChar(x+6*i,y,message[i],color_on,color_off);
+        i++;                
+    }
+}
+void LCD_drawBorder(unsigned char x, unsigned char y, unsigned char length, unsigned char width, unsigned short color){
+    int ii=0;
+    for (ii=0;ii<length;ii++){
+        int jj=0;
+        for (jj=0;jj<width;jj++){
+            LCD_drawPixel(x+ii,y+jj,color);
         }
     }
 }

@@ -69,19 +69,27 @@ int main()
     
     __builtin_enable_interrupts();
     
-    int x = 6;
-    int y = 5;
-    int wide = 10;
+    int x = 10;
+    int y = 60;
+    int wide = 20;
     int lng = 100;
     int ii=0;
     int jj=0;
     int aux1=40;
     int aux2=40;
     char aux3='A';
+    short fondo=BLUE;
+    char message[20];
+    
+    LCD_drawBorder(x,y,lng,wide,GREEN);
     
     while(1) 
     {
-        LCD_drawchar(aux1,aux2,aux3, RED, BLUE);
+        LCD_drawChar(aux1,aux2,aux3, RED, fondo);
+        LCD_drawChar(aux1+5,aux2,'C', RED, fondo);
+        int q=47;
+        sprintf(message,"Hello World = %d %",q);
+        LCD_drawString(15,50,message,WHITE,fondo);
         while(ii<lng){
             
             while(jj<wide){
