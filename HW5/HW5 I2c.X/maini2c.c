@@ -106,7 +106,7 @@ int main(void)
     DDPCONbits.JTAGEN = 0;
 
     // do your TRIS and LAT commands here
-    //TRISAbits.TRISA4 = 0;
+    TRISAbits.TRISA4 = 0;
     
     //TRISBbits.TRISB4 = 1;
     
@@ -122,6 +122,7 @@ int main(void)
     float pi=3.121;
     float steps = 100.0;
     unsigned char val=0;
+    int aux = 0;
     
     __builtin_enable_interrupts();
     
@@ -157,15 +158,21 @@ int main(void)
 //        }
         
         val = get();
-        val = (val>>7); //look at pin 0 only
-        if (val){ // if button is pressed
+        aux = (val>>7); //look at pin 0 only
+        if (aux){ // if button is pressed
             set(1,0); // level (high), pin number (GP0)
         }
         else {
             set(0,0);
         }
+        
+        LATAbits.LATA4=1;
             
-        //while(_CP0_GET_COUNT()<24000000/1000){ }
+        while(_CP0_GET_COUNT()<24000000/10){ }
+        
+        _CP0_SET_COUNT(0);
+        LATAbits.LATA4=0;
+        while(_CP0_GET_COUNT()<24000000/10){ }
     }          
 }
 

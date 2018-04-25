@@ -1,6 +1,6 @@
 #include<xc.h>
 #include "i2c_master_noint.h"
-#define addr 0b00100111
+#define addr 0b00100000
 
 // I2C Master utilities, 100 kHz, using polling rather than interrupts
 // The functions must be callled in the correct order as per the I2C protocol
@@ -55,11 +55,11 @@ void init_i2c(void){
     ANSELBbits.ANSB3 = 0;
     
     //dis seqop
-    i2c_master_start();
-    i2c_master_send(addr<<1);
-    i2c_master_send(0x05);
-    i2c_master_send(0b00100000);
-    i2c_master_stop();
+//    i2c_master_start();
+//    i2c_master_send(addr<<1);
+//    i2c_master_send(0x05);
+//    i2c_master_send(0b00100000);
+//    i2c_master_stop();
     
     //com i2c 0-3 in 4-7 out
     i2c_master_start();
