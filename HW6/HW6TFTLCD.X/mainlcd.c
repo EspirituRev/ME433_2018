@@ -69,64 +69,27 @@ int main()
     
     __builtin_enable_interrupts();
     
-    int x = 10;
-    int y = 60;
-    int wide = 20;
-    int lng = 100;
-    int ii=0;
-    int jj=0;
-    int aux1=40;
-    int aux2=40;
-    char aux3='A';
+    int x = 15;
+    int y = 40;
+    int width = 15;
+    int length = 100;
     short fondo=BLUE;
     char message[20];
+    int value=0;
     
-    LCD_drawBorder(x,y,lng,wide,GREEN);
+    LCD_drawBar(x,y,length+4,width+4,BLACK);
     
     while(1) 
     {
-        LCD_drawChar(aux1,aux2,aux3, RED, fondo);
-        LCD_drawChar(aux1+5,aux2,'C', RED, fondo);
-        int q=47;
-        sprintf(message,"Hello World = %d %",q);
-        LCD_drawString(15,50,message,WHITE,fondo);
-        while(ii<lng){
-            
-            while(jj<wide){
-                LCD_drawPixel(ii+x,y+jj, RED);
-                jj++;       
-            }
+        LCD_drawBar(x+2,y+2,length,width,WHITE);
+        while(value<length){
+            value++;
+            sprintf(message,"Hello World %d  ",value);
+            LCD_drawString(28,32,message,WHITE,fondo);
+            LCD_drawBar(x+2,y+2,value,width,GREEN);
             _CP0_SET_COUNT(0);
-            while(_CP0_GET_COUNT()<24000000/1){}
-            jj=0;
-            ii++;
+            while(_CP0_GET_COUNT()<24000000/10){}
         }
-        ii=0;
-        
-//        _CP0_SET_COUNT(0);
-//        while(_CP0_GET_COUNT()<24000000/1){}
-//        LCD_clearScreen(YELLOW);
-//        _CP0_SET_COUNT(0);
-//        while(_CP0_GET_COUNT()<24000000/1){}
-//        LCD_clearScreen(GREEN);
-//        _CP0_SET_COUNT(0);
-//        while(_CP0_GET_COUNT()<24000000/1){}
-//        LCD_clearScreen(BLUE);
-//        _CP0_SET_COUNT(0);
-//        while(_CP0_GET_COUNT()<24000000/1){}
-//        LCD_clearScreen(BLACK);
-//        
-//        if(PB1==1)
-//        {
-//            TEST1 = 1;
-//        }
-//        else
-//        {
-//            TEST1=0;
-//            //_CP0_SET_COUNT(0);
-//        }
+        value=0;
     }
-	// use _CP0_SET_COUNT(0) and _CP0_GET_COUNT() to test the PIC timing
-	// remember the core timer runs at half the sysclk
-            
 }

@@ -270,7 +270,7 @@ void LCD_drawString(unsigned char x, unsigned char y, unsigned char* message, un
         i++;                
     }
 }
-void LCD_drawBorder(unsigned char x, unsigned char y, unsigned char length, unsigned char width, unsigned short color){
+void LCD_drawBar(unsigned char x, unsigned char y, unsigned char length, unsigned char width, unsigned short color){
     int ii=0;
     for (ii=0;ii<length;ii++){
         int jj=0;
