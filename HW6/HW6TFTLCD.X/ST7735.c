@@ -247,3 +247,18 @@ void LCD_clearScreen(unsigned short color) {
 		LCD_data16(color);
 	}
 }
+
+void LCD_drawchar(unsigned char x, unsigned char y, unsigned char mess, unsigned short coloron, unsigned short coloroff){
+    int col=0; char pixels; int j;
+    for(col=0;col<5;col++){
+        pixels=ASCII[mess-0x20][col];
+        for(j=0;j<8;j++){
+            if((pixels>>j)&1){
+                LCD_drawPixel(x+col,y+j,coloron);
+            }
+            else{
+                LCD_drawPixel(x+col,y+j,coloroff);
+            }
+        }
+    }
+}

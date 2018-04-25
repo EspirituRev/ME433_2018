@@ -1,6 +1,6 @@
 #include<xc.h>
 #include "i2c_master_noint.h"
-#define addr 0b00100000
+#define addr 0b00100111
 
 // I2C Master utilities, 100 kHz, using polling rather than interrupts
 // The functions must be callled in the correct order as per the I2C protocol

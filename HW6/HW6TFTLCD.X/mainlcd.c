@@ -75,16 +75,18 @@ int main()
     int lng = 100;
     int ii=0;
     int jj=0;
+    int aux1=40;
+    int aux2=40;
+    char aux3='A';
     
     while(1) 
     {
+        LCD_drawchar(aux1,aux2,aux3, RED, BLUE);
         while(ii<lng){
             
             while(jj<wide){
                 LCD_drawPixel(ii+x,y+jj, RED);
-                jj++;
-                _CP0_SET_COUNT(0);
-                while(_CP0_GET_COUNT()<24000000/1){}
+                jj++;       
             }
             _CP0_SET_COUNT(0);
             while(_CP0_GET_COUNT()<24000000/1){}
