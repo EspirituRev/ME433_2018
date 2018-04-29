@@ -1,6 +1,6 @@
 #include<xc.h>
 #include "i2c_master_noint.h"
-#define addr 0b00100111
+#define addr 0b00100001
 
 // I2C Master utilities, 100 kHz, using polling rather than interrupts
 // The functions must be callled in the correct order as per the I2C protocol
@@ -8,7 +8,7 @@
 // I2C pins need pull-up resistors, 2k-10k
 
 void i2c_master_setup(void) {
-  I2C2BRG = 235;//some number for 100kHz;            // I2CBRG = [1/(2*Fsck) - PGD]*Pblck - 2
+  I2C2BRG = 53;//some number for 100kHz;            // I2CBRG = [1/(2*Fsck) - PGD]*Pblck - 2
                                     // look up PGD for your PIC32
   I2C2CONbits.ON = 1;               // turn on the I2C1 module
 }
