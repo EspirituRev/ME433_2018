@@ -138,8 +138,8 @@ int main(void)
         sprintf(message2,"Z: %3.0f  ",zscale);
         LCD_drawString(15,55,message2,WHITE,screen);
         
-        LCD_drawBarVer(63,40,4,120,yscale,GREEN,WHITE);
-        LCD_drawBarHor(1,98,128,4,xscale,GREEN,WHITE);
+        LCD_drawBarVer(63,40,4,120,yscale,RED,WHITE);
+        LCD_drawBarHor(1,98,128,4,xscale,RED,WHITE);
         
         LATAbits.LATA4=1;
             

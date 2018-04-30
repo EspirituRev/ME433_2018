@@ -93,6 +93,8 @@ unsigned char get(unsigned char addr){
 }
 
 void init_I2C_IMU(unsigned char addr){
+    I2C_send(addr, 0x0B, 0b00000010);
+    
     I2C_send(addr, CTRL1_XL, 0b10000000); //Sample rate 1.66kHz, 2g sensitivity, 100Hz filter
                                   //0b10000010
     I2C_send(addr, CTRL2_G, 0b10000000);  //Sample rate 1.66kHz, 1000dps sensitivity
