@@ -54,7 +54,10 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 // *****************************************************************************
 
 #include "app.h"
-
+#include <stdio.h>
+#include <math.h>
+#include "ST7735.h"
+#include "i2c_master.h"
 // *****************************************************************************
 // *****************************************************************************
 // Section: Global Data Definitions
@@ -115,12 +118,20 @@ APP_DATA appData;
 void APP_Initialize ( void )
 {
     /* Place the App state machine in its initial state. */
-    appData.state = APP_STATE_INIT;
-    #define TEST1   LATAbits.LATA4
-    #define PB1     PORTBbits.RB4
-    TRISAbits.TRISA4 = 0;
-    TRISBbits.TRISB4 = 1;
-
+    #define CS      LATAbits.LATA0
+    #define addr    0b00100001
+    #define addr2   0b01101011
+#define screen  0x001F
+    
+    //TRISBbits.TRISB4 = 1;
+    
+    i2c_master_setup();
+    init_i2c(addr); //initialize i2c
+    LCD_init();
+    init_I2C_IMU(addr2);
+    LCD_clearScreen(screen);
+    
+    
     
     
     /* TODO: Initialize your application's state machine and other
@@ -139,7 +150,23 @@ void APP_Initialize ( void )
 
 void APP_Tasks ( void )
 {
-int time=12000;
+    int time=12000;
+    unsigned char val=0;
+    int aux = 0;
+    char message1[20];
+    char message2[20];
+    int aux2 =0;
+    int x=0;
+    int y=0;
+    unsigned char data[14];
+    signed short temp;
+    signed short gyrox;
+    signed short gyroy;
+    signed short gyroz;
+    signed short accelx;
+    signed short accely;
+    signed short accelz;
+    char test;
     /* Check the application's current state. */
     switch ( appData.state )
     {
@@ -160,26 +187,63 @@ int time=12000;
 
         case APP_STATE_SERVICE_TASKS:
         {
-        if(PB1==1)
-        {
-            if(_CP0_GET_COUNT()>time)
-            {
-                TEST1 = 1;
-            }
-            if(_CP0_GET_COUNT()<time)
-            {
-                TEST1 = 0;
-            }
-            if(_CP0_GET_COUNT()>2*time)
-            {
-            _CP0_SET_COUNT(0);
-            }
+        _CP0_SET_COUNT(0);
+
+        
+        val = get(addr);
+        aux = (val>>7); //look at pin 0 only
+        if (aux){ // if button is pressed
+            
+            set(0,0,addr); // level (high), pin number (GP0)
         }
-        else
-        {
-            TEST1=0;
-            //_CP0_SET_COUNT(0);
+        else {
+            set(1,0,addr);
         }
+        sprintf(message1,"Expander value: %d  ",!aux);
+        
+        LCD_drawString(15,5,message1,WHITE,screen);
+        aux2 = I2C_read_WAI(addr2,WHO_AM_I);
+        
+        sprintf(message2,"Imu Value: %d  ",aux2);
+        LCD_drawString(15,15,message2,WHITE,screen);
+        
+        I2C_readall_imu(addr2, 0x20, data);
+        test=I2C_readtest(addr2, 0x22, test);
+        temp=(data[1]<<8)|data[0];
+        gyrox=(data[3]<<8)|data[2];
+        gyroy=(data[5]<<8)|data[4];
+        gyroz=(data[7]<<8)|data[6];
+        accelx=(data[9]<<8)|data[8];
+        accely=(data[11]<<8)|data[10];
+        accelz=(data[13]<<8)|data[12];
+        
+        float xscale = accelx/325.0; 
+        float yscale = accely/325.0;
+        float zscale = accelz/325.0;
+        
+        sprintf(message2,"TEMP: %d  ",temp);
+        LCD_drawString(15,25,message2,WHITE,screen);
+        
+        sprintf(message2,"X: %3.0f  ",xscale);
+        LCD_drawString(15,35,message2,WHITE,screen);
+        
+        sprintf(message2,"Y: %3.0f  ",yscale);
+        LCD_drawString(15,45,message2,WHITE,screen);
+        
+        sprintf(message2,"Z: %3.0f  ",zscale);
+        LCD_drawString(15,55,message2,WHITE,screen);
+        
+        LCD_drawBarVer(63,40,4,120,yscale,RED,WHITE);
+        LCD_drawBarHor(1,98,128,4,xscale,RED,WHITE);
+        
+        LATAbits.LATA4=1;
+            
+        while(_CP0_GET_COUNT()<24000000/10){ }
+        
+        _CP0_SET_COUNT(0);
+        LATAbits.LATA4=0;
+        while(_CP0_GET_COUNT()<24000000/10){ }
+        
             break;
         }
 
