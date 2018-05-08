@@ -121,8 +121,9 @@ void APP_Initialize ( void )
     #define CS      LATAbits.LATA0
     #define addr    0b00100001
     #define addr2   0b01101011
-#define screen  0x001F
+    #define screen  0x001F
     
+    TRISAbits.TRISA4 = 0;
     //TRISBbits.TRISB4 = 1;
     
     i2c_master_setup();
@@ -194,10 +195,12 @@ void APP_Tasks ( void )
         aux = (val>>7); //look at pin 0 only
         if (aux){ // if button is pressed
             
-            set(0,0,addr); // level (high), pin number (GP0)
+            set(0,0,2,addr); // level (low), pin number (GP0)
+            //set(0,1,addr); // level (low), pin number (GP0)
         }
         else {
-            set(1,0,addr);
+            set(1,0,2,addr);
+            //set(1,1,2,addr);
         }
         sprintf(message1,"Expander value: %d  ",!aux);
         
@@ -217,9 +220,9 @@ void APP_Tasks ( void )
         accely=(data[11]<<8)|data[10];
         accelz=(data[13]<<8)|data[12];
         
-        float xscale = accelx/325.0; 
-        float yscale = accely/325.0;
-        float zscale = accelz/325.0;
+        float xscale = accelx/163.0; 
+        float yscale = accely/163.0;
+        float zscale = accelz/163.0;
         
         sprintf(message2,"TEMP: %d  ",temp);
         LCD_drawString(15,25,message2,WHITE,screen);
@@ -233,8 +236,8 @@ void APP_Tasks ( void )
         sprintf(message2,"Z: %3.0f  ",zscale);
         LCD_drawString(15,55,message2,WHITE,screen);
         
-        LCD_drawBarVer(63,40,4,120,yscale,RED,WHITE);
-        LCD_drawBarHor(1,98,128,4,xscale,RED,WHITE);
+        LCD_drawBarVer(63,40,4,120,zscale/2,RED,WHITE);
+        LCD_drawBarHor(1,98,128,4,xscale/2,RED,WHITE);
         
         LATAbits.LATA4=1;
             
