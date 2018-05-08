@@ -50,10 +50,12 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 #include <stdio.h>
 #include <xc.h>
 #include "i2c_master.h"
+#include "ST7735.h"
 
 #define CS      LATAbits.LATA0
 #define addr    0b00100001
 #define addr2   0b01101011
+#define screen  0x001F
  
 
 // *****************************************************************************
@@ -66,6 +68,22 @@ uint8_t APP_MAKE_BUFFER_DMA_READY dataOut[APP_READ_BUFFER_SIZE];
 uint8_t APP_MAKE_BUFFER_DMA_READY readBuffer[APP_READ_BUFFER_SIZE];
 int len, i = 0;
 int startTime = 0; // to remember the loop time
+unsigned char val=0;
+    int flagserial =0;
+    char message1[20];
+    char message2[20];
+    int aux2 =0;
+    int x=0;
+    int y=0;
+    unsigned char data[14];
+    signed short temp;
+    signed short gyrox;
+    signed short gyroy;
+    signed short gyroz;
+    signed short accelx;
+    signed short accely;
+    signed short accelz;
+    char test;
 
 // *****************************************************************************
 /* Application Data
@@ -342,6 +360,9 @@ void APP_Initialize(void) {
     init_i2c(addr); //initialize i2c
     init_I2C_IMU(addr2);
     
+    // Comunication with LCD
+    LCD_init();
+    LCD_clearScreen(screen);
     
 }
 
@@ -355,22 +376,7 @@ void APP_Initialize(void) {
 void APP_Tasks(void) {
     /* Update the application state machine based
      * on the current state */
-    unsigned char val=0;
-    int aux = 0;
-    char message1[20];
-    char message2[20];
-    int aux2 =0;
-    int x=0;
-    int y=0;
-    unsigned char data[14];
-    signed short temp;
-    signed short gyrox;
-    signed short gyroy;
-    signed short gyroz;
-    signed short accelx;
-    signed short accely;
-    signed short accelz;
-    char test;
+    
     
     switch (appData.state) {
         case APP_STATE_INIT:
@@ -442,7 +448,7 @@ void APP_Tasks(void) {
              * The isReadComplete flag gets updated in the CDC event handler. */
 
              /* WAIT FOR 5HZ TO PASS OR UNTIL A LETTER IS RECEIVED */
-            if (appData.isReadComplete || _CP0_GET_COUNT() - startTime > (48000000 / 2 / 5)) {
+            if (appData.isReadComplete || _CP0_GET_COUNT() - startTime > (48000000 / 2 / 10000)) {
                 appData.state = APP_STATE_SCHEDULE_WRITE;
             }
 
@@ -471,28 +477,41 @@ void APP_Tasks(void) {
 //            //set(1,1,2,addr);
 //        }
 //                
-//        
-        I2C_readall_imu(addr2, 0x20, data);
-        temp=(data[1]<<8)|data[0];
-        gyrox=(data[3]<<8)|data[2];
-        gyroy=(data[5]<<8)|data[4];
-        gyroz=(data[7]<<8)|data[6];
-        accelx=(data[9]<<8)|data[8];
-        accely=(data[11]<<8)|data[10];
-        accelz=(data[13]<<8)|data[12];
-        
-        float xscale = accelx/163.0; 
-        float yscale = accely/163.0;
-        float zscale = accelz/163.0;
-//         
-//        LATAbits.LATA4=1;
-//            
-//        while(_CP0_GET_COUNT()<24000000/10){ }
-//        
-//        _CP0_SET_COUNT(0);
-//        LATAbits.LATA4=0;
-//        while(_CP0_GET_COUNT()<24000000/10){ }
-// 
+//      
+            LCD_drawString(15,5,message1,WHITE,screen);
+            aux2 = I2C_read_WAI(addr2,WHO_AM_I);
+            LCD_drawString(15,5,message1,WHITE,screen);
+            aux2 = I2C_read_WAI(addr2,WHO_AM_I);
+            sprintf(message2,"Imu Value: %d  ",aux2);
+            LCD_drawString(15,15,message2,WHITE,screen);
+            
+            I2C_readall_imu(addr2, 0x20, data);
+            temp=(data[1]<<8)|data[0];
+            gyrox=(data[3]<<8)|data[2];
+            gyroy=(data[5]<<8)|data[4];
+            gyroz=(data[7]<<8)|data[6];
+            accelx=(data[9]<<8)|data[8];
+            accely=(data[11]<<8)|data[10];
+            accelz=(data[13]<<8)|data[12];
+
+            float xscale = accelx/163.0; 
+            float yscale = accely/163.0;
+            float zscale = accelz/163.0;
+            
+            sprintf(message2,"TEMP: %d  ",temp);
+            LCD_drawString(15,25,message2,WHITE,screen);
+
+            sprintf(message2,"X: %3.0f  ",xscale);
+            LCD_drawString(15,35,message2,WHITE,screen);
+
+            sprintf(message2,"Y: %3.0f  ",yscale);
+            LCD_drawString(15,45,message2,WHITE,screen);
+
+            sprintf(message2,"Z: %3.0f  ",zscale);
+            LCD_drawString(15,55,message2,WHITE,screen);
+
+            LCD_drawBarVer(63,40,4,120,zscale/2,RED,WHITE);
+            LCD_drawBarHor(1,98,128,4,xscale/2,RED,WHITE);
 
             /* Setup the write */
 
@@ -503,22 +522,42 @@ void APP_Tasks(void) {
             /* PUT THE TEXT YOU WANT TO SEND TO THE COMPUTER IN dataOut
             AND REMEMBER THE NUMBER OF CHARACTERS IN len */
             /* THIS IS WHERE YOU CAN READ YOUR IMU, PRINT TO THE LCD, ETC */
-            len = sprintf(dataOut, "%d %3.2f %3.2f %3.2f %3.2f %3.2f %3.2f\r\n", i, accelx/163.0, accely/163.0, accelz/163.0, gyrox/163.0, gyroy/163.0, gyroz/163.0);
+            len = sprintf(dataOut,"%d %3.2f %3.2f %3.2f %3.2f %3.2f %3.2f\r\n", i, accelx/163.0, accely/163.0, accelz/163.0, gyrox/163.0, gyroy/163.0, gyroz/163.0);
             
             //len = sprintf(dataOut, "%d\r\n", i);
             i++; // increment the index so we see a change in the text
+            
+            
             /* IF A LETTER WAS RECEIVED, ECHO IT BACK SO THE USER CAN SEE IT */
             if (appData.isReadComplete) {
                 USB_DEVICE_CDC_Write(USB_DEVICE_CDC_INDEX_0,
-                        &appData.writeTransferHandle,
-                        appData.readBuffer, 1,
+                        &appData.writeTransferHandle, 0, 1,
                         USB_DEVICE_CDC_TRANSFER_FLAGS_DATA_COMPLETE);
+                if(appData.readBuffer[0] == 'r'){
+                    flagserial=1;
+                    i=0;
+                }
+                
             }
             /* ELSE SEND THE MESSAGE YOU WANTED TO SEND */
             else {
-                USB_DEVICE_CDC_Write(USB_DEVICE_CDC_INDEX_0,
+                if(flagserial==1){
+                    USB_DEVICE_CDC_Write(USB_DEVICE_CDC_INDEX_0,
                         &appData.writeTransferHandle, dataOut, len,
                         USB_DEVICE_CDC_TRANSFER_FLAGS_DATA_COMPLETE);
+                    if(i>100){
+                        flagserial=0;
+                        i=0;
+                    }
+                }
+                else{
+                    len=1;
+                    dataOut[0]=0;
+//                    len = sprintf(dataOut, "%d\r\n", i);
+                    USB_DEVICE_CDC_Write(USB_DEVICE_CDC_INDEX_0,
+                    &appData.writeTransferHandle, dataOut, len,
+                    USB_DEVICE_CDC_TRANSFER_FLAGS_DATA_COMPLETE);
+                }
                 startTime = _CP0_GET_COUNT(); // reset the timer for acurate delays
             }
             break;

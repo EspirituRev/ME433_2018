@@ -173,6 +173,8 @@
                    projectFiles="false">
       <itemPath>Makefile</itemPath>
     </logicalFolder>
+    <itemPath>../src/ST7735.c</itemPath>
+    <itemPath>../src/ST7735.h</itemPath>
   </logicalFolder>
   <sourceRootList>
     <Elem>../src</Elem>

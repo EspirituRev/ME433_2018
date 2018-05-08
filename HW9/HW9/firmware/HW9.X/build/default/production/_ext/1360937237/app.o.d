@@ -193,4 +193,5 @@ build/default/production/_ext/1360937237/app.o:  \
  ../../../../../../../../../microchip/harmony/v2_05_01/framework/usb/src/usb_device_function_driver.h  \
  ../../../../../../../../../microchip/harmony/v2_05_01/framework/usb/usb_cdc.h  \
  ../src/app.h  \
-../src/i2c_master.h 
+../src/i2c_master.h  \
+../src/ST7735.h 
