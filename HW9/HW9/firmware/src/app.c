@@ -545,7 +545,7 @@ void APP_Tasks(void) {
                     USB_DEVICE_CDC_Write(USB_DEVICE_CDC_INDEX_0,
                         &appData.writeTransferHandle, dataOut, len,
                         USB_DEVICE_CDC_TRANSFER_FLAGS_DATA_COMPLETE);
-                    if(i>100){
+                    if(i>99){
                         flagserial=0;
                         i=0;
                     }
