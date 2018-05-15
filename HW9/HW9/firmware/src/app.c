@@ -69,21 +69,21 @@ uint8_t APP_MAKE_BUFFER_DMA_READY readBuffer[APP_READ_BUFFER_SIZE];
 int len, i = 0;
 int startTime = 0; // to remember the loop time
 unsigned char val=0;
-    int flagserial =0;
-    char message1[20];
-    char message2[20];
-    int aux2 =0;
-    int x=0;
-    int y=0;
-    unsigned char data[14];
-    signed short temp;
-    signed short gyrox;
-    signed short gyroy;
-    signed short gyroz;
-    signed short accelx;
-    signed short accely;
-    signed short accelz;
-    char test;
+int flagserial =0;
+char message1[20];
+char message2[20];
+int aux2 =0;
+int x=0;
+int y=0;
+unsigned char data[14];
+signed short temp;
+signed short gyrox;
+signed short gyroy;
+signed short gyroz;
+signed short accelx;
+signed short accely;
+signed short accelz;
+char test;
 
 // *****************************************************************************
 /* Application Data

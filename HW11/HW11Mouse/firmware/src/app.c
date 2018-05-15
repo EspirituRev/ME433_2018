@@ -49,7 +49,27 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 // *****************************************************************************
 
 #include "app.h"
+#include <stdio.h>
+#include <xc.h>
+#include "i2c_master.h"
+//#include "ST7735.h"
 
+#define CS      LATAbits.LATA0
+#define addr    0b00100001
+#define addr2   0b01101011
+#define screen  0x001F
+#define CS      LATAbits.LATA0
+
+int startTime = 0;
+unsigned char data[14];
+signed short temp;
+signed short gyrox;
+signed short gyroy;
+signed short gyroz;
+signed short accelx;
+signed short accely;
+signed short accelz;
+char test;
 
 // *****************************************************************************
 // *****************************************************************************
@@ -255,6 +275,12 @@ void APP_Initialize(void) {
     //appData.emulateMouse = true;
     appData.hidInstance = 0;
     appData.isMouseReportSendBusy = false;
+    
+    TRISAbits.TRISA4 = 0;
+    startTime = _CP0_GET_COUNT();
+    i2c_master_setup();
+    init_i2c(addr); //initialize i2c
+    init_I2C_IMU(addr2);
 }
 
 /******************************************************************************
@@ -265,9 +291,7 @@ void APP_Initialize(void) {
  */
 
 void APP_Tasks(void) {
-    static int8_t vector = 0;
-    static uint8_t movement_length = 0;
-    int8_t dir_table[] = {-4, -4, -4, 0, 4, 4, 4, 0};
+    static uint8_t inc = 0;
 
     /* Check the application's current state. */
     switch (appData.state) {
@@ -305,16 +329,55 @@ void APP_Tasks(void) {
         case APP_STATE_MOUSE_EMULATE:
             
             // every 50th loop, or 20 times per second
-            if (movement_length > 50) {
+                I2C_readall_imu(addr2, 0x20, data);
+                temp=(data[1]<<8)|data[0];
+                gyrox=(data[3]<<8)|data[2];
+                gyroy=(data[5]<<8)|data[4];
+                gyroz=(data[7]<<8)|data[6];
+                accelx=(data[9]<<8)|data[8];
+                accely=(data[11]<<8)|data[10];
+                accelz=(data[13]<<8)|data[12];
+                
+//                LATAbits.LATA4=1;
+//
+//                while(_CP0_GET_COUNT()<24000000/10){ }
+//                _CP0_SET_COUNT(0);
+//                LATAbits.LATA4=0;
+//                while(_CP0_GET_COUNT()<24000000/10){ }
+                
+                float xscale = accelx/163.0; 
+                //float yscale = accely/163.0;
+                float zscale = accelz/163.0;
+                
+                if(zscale>25.0){
+                    inc=1;
+                }
+                else{
+                    if(zscale<-25.0){
+                        inc=-1;
+                    }
+                    else{
+                        inc=0;
+                    }
+                }
                 appData.mouseButton[0] = MOUSE_BUTTON_STATE_RELEASED;
                 appData.mouseButton[1] = MOUSE_BUTTON_STATE_RELEASED;
-                appData.xCoordinate = (int8_t) dir_table[vector & 0x07];
-                appData.yCoordinate = (int8_t) dir_table[(vector + 2) & 0x07];
-                vector++;
-                movement_length = 0;
-            }
-
-            if (!appData.isMouseReportSendBusy) {
+                appData.xCoordinate = (int8_t) inc;
+                if(xscale>25.0){
+                    inc=1;
+                }
+                else{
+                    if(xscale<-25.0){
+                        inc=-1;
+                    }
+                    else{
+                        inc=0;
+                    }
+                }
+                appData.yCoordinate = (int8_t) inc;
+                //movement_length =m 0;
+            
+                if (!appData.isMouseReportSendBusy) {
                 /* This means we can send the mouse report. The
                    isMouseReportBusy flag is updated in the HID Event Handler. */
 
@@ -364,7 +427,6 @@ void APP_Tasks(void) {
                             sizeof (MOUSE_REPORT));
                     appData.setIdleTimer = 0;
                 }
-                movement_length++;
             }
 
             break;
