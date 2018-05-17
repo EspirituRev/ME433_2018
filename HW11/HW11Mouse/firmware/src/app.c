@@ -338,23 +338,17 @@ void APP_Tasks(void) {
                 accely=(data[11]<<8)|data[10];
                 accelz=(data[13]<<8)|data[12];
                 
-//                LATAbits.LATA4=1;
-//
-//                while(_CP0_GET_COUNT()<24000000/10){ }
-//                _CP0_SET_COUNT(0);
-//                LATAbits.LATA4=0;
-//                while(_CP0_GET_COUNT()<24000000/10){ }
                 
                 float xscale = accelx/163.0; 
                 //float yscale = accely/163.0;
                 float zscale = accelz/163.0;
                 
                 if(zscale>25.0){
-                    inc=1;
+                    inc=2;
                 }
                 else{
                     if(zscale<-25.0){
-                        inc=-1;
+                        inc=-2;
                     }
                     else{
                         inc=0;
@@ -364,11 +358,11 @@ void APP_Tasks(void) {
                 appData.mouseButton[1] = MOUSE_BUTTON_STATE_RELEASED;
                 appData.xCoordinate = (int8_t) inc;
                 if(xscale>25.0){
-                    inc=1;
+                    inc=2;
                 }
                 else{
                     if(xscale<-25.0){
-                        inc=-1;
+                        inc=-2;
                     }
                     else{
                         inc=0;

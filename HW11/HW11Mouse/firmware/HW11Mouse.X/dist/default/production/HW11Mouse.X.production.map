@@ -1668,7 +1668,7 @@ END GROUP
  .debug_abbrev  0x0000299d       0x28 c:/program files (x86)/microchip/xc32/v2.05/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib\libpic32.a(default-on-bootstrap.o)
  .debug_abbrev  0x000029c5       0x28 c:/program files (x86)/microchip/xc32/v2.05/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib\libpic32.a(defaultinterrupt.o)
 
-.debug_line     0x00000000     0x5501
+.debug_line     0x00000000     0x54ff
  *(.debug_line)
  .debug_line    0x00000000      0x47b build/default/production/_ext/639803181/sys_clk_pic32mx.o
  .debug_line    0x0000047b      0x633 build/default/production/_ext/340578644/sys_devcon.o
@@ -1678,19 +1678,19 @@ END GROUP
  .debug_line    0x00001cb5      0x1f5 build/default/production/_ext/1688732426/system_interrupt.o
  .debug_line    0x00001eaa      0x1d7 build/default/production/_ext/1688732426/system_exceptions.o
  .debug_line    0x00002081      0x27b build/default/production/_ext/1688732426/system_tasks.o
- .debug_line    0x000022fc      0x38b build/default/production/_ext/1360937237/app.o
- .debug_line    0x00002687       0xc6 build/default/production/_ext/1360937237/main.o
- .debug_line    0x0000274d      0x767 build/default/production/_ext/782247627/drv_usbfs.o
- .debug_line    0x00002eb4      0xdc6 build/default/production/_ext/782247627/drv_usbfs_device.o
- .debug_line    0x00003c7a      0x2dd build/default/production/_ext/1198890485/sys_int_pic32.o
- .debug_line    0x00003f57      0x9f3 build/default/production/_ext/1611003112/usb_device.o
- .debug_line    0x0000494a      0x59f build/default/production/_ext/1611003112/usb_device_hid.o
- .debug_line    0x00004ee9      0x136 build/default/production/_ext/1360937237/Mouse.o
- .debug_line    0x0000501f      0x271 build/default/production/_ext/1360937237/i2c_master.o
- .debug_line    0x00005290       0xa5 c:/program files (x86)/microchip/xc32/v2.05/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib\libpic32.a(default-bootstrap-exception-handler.o)
- .debug_line    0x00005335       0x92 c:/program files (x86)/microchip/xc32/v2.05/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib\libpic32.a(default-on-reset.o)
- .debug_line    0x000053c7       0x96 c:/program files (x86)/microchip/xc32/v2.05/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib\libpic32.a(default-on-bootstrap.o)
- .debug_line    0x0000545d       0xa4 c:/program files (x86)/microchip/xc32/v2.05/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib\libpic32.a(defaultinterrupt.o)
+ .debug_line    0x000022fc      0x389 build/default/production/_ext/1360937237/app.o
+ .debug_line    0x00002685       0xc6 build/default/production/_ext/1360937237/main.o
+ .debug_line    0x0000274b      0x767 build/default/production/_ext/782247627/drv_usbfs.o
+ .debug_line    0x00002eb2      0xdc6 build/default/production/_ext/782247627/drv_usbfs_device.o
+ .debug_line    0x00003c78      0x2dd build/default/production/_ext/1198890485/sys_int_pic32.o
+ .debug_line    0x00003f55      0x9f3 build/default/production/_ext/1611003112/usb_device.o
+ .debug_line    0x00004948      0x59f build/default/production/_ext/1611003112/usb_device_hid.o
+ .debug_line    0x00004ee7      0x136 build/default/production/_ext/1360937237/Mouse.o
+ .debug_line    0x0000501d      0x271 build/default/production/_ext/1360937237/i2c_master.o
+ .debug_line    0x0000528e       0xa5 c:/program files (x86)/microchip/xc32/v2.05/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib\libpic32.a(default-bootstrap-exception-handler.o)
+ .debug_line    0x00005333       0x92 c:/program files (x86)/microchip/xc32/v2.05/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib\libpic32.a(default-on-reset.o)
+ .debug_line    0x000053c5       0x96 c:/program files (x86)/microchip/xc32/v2.05/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib\libpic32.a(default-on-bootstrap.o)
+ .debug_line    0x0000545b       0xa4 c:/program files (x86)/microchip/xc32/v2.05/bin/bin/../../lib/gcc/pic32mx/4.8.3/../../../../pic32mx/lib\libpic32.a(defaultinterrupt.o)
 
 .debug_frame    0x00000000     0x10b4
  *(.debug_frame)
