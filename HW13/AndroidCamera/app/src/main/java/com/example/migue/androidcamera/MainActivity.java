@@ -18,6 +18,9 @@ import android.view.TextureView;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
+
+
 
 import java.io.IOException;
 
@@ -25,6 +28,7 @@ import static android.graphics.Color.blue;
 import static android.graphics.Color.green;
 import static android.graphics.Color.red;
 import static android.graphics.Color.rgb;
+
 
 public class MainActivity extends Activity implements TextureView.SurfaceTextureListener {
     private Camera mCamera;
@@ -35,6 +39,9 @@ public class MainActivity extends Activity implements TextureView.SurfaceTexture
     private Canvas canvas = new Canvas(bmp);
     private Paint paint1 = new Paint();
     private TextView mTextView;
+    SeekBar sensitivityGR;
+    SeekBar sensitivityGB;
+
 
     static long prevtime = 0; // for FPS calculation
 
@@ -42,8 +49,11 @@ public class MainActivity extends Activity implements TextureView.SurfaceTexture
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); // keeps the screen from turning off
-
+        sensitivityGR = (SeekBar)findViewById(R.id.seek1);
+        sensitivityGB = (SeekBar)findViewById(R.id.seek2);
         mTextView = (TextView) findViewById(R.id.cameraStatus);
+        setMyControlListener1();
+        setMyControlListener2();
 
         // see if the app has permission to use the camera
         ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CAMERA}, 1);
@@ -99,7 +109,8 @@ public class MainActivity extends Activity implements TextureView.SurfaceTexture
 
         final Canvas c = mSurfaceHolder.lockCanvas();
         if (c != null) {
-            int thresh = 20; // comparison value
+            int thresh1 = sensitivityGB.getProgress(); // comparison value
+            int thresh2 = sensitivityGR.getProgress();
             int[] pixels = new int[bmp.getWidth()]; // pixels[] is the RGBA data
             int lineY = 100; // which row in the bitmap to analyze to read
             for (int j = 0; j<bmp.getHeight()/3;j++){
@@ -107,8 +118,8 @@ public class MainActivity extends Activity implements TextureView.SurfaceTexture
                 bmp.getPixels(pixels, 0, bmp.getWidth(), 0, lineY, bmp.getWidth(), 1);
                 // in the row, see if there is more green than red
                 for (int i = 0; i < bmp.getWidth(); i++) {
-                    if ((green(pixels[i])- red(pixels[i]))> thresh) {
-                        if ((green(pixels[i])- blue(pixels[i]))> thresh) {
+                    if ((green(pixels[i])- red(pixels[i]))> thresh1) {
+                        if ((green(pixels[i])- blue(pixels[i]))> thresh2) {
                             pixels[i] = rgb(0, 255, 0); // over write the pixel with pure green
                         }
                     }
@@ -136,5 +147,45 @@ public class MainActivity extends Activity implements TextureView.SurfaceTexture
         long diff = nowtime - prevtime;
         mTextView.setText("FPS " + 1000 / diff);
         prevtime = nowtime;
+    }
+    private void setMyControlListener1() {
+        sensitivityGB.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+
+            int progressChanged = 0;
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                progressChanged = progress;
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+    }
+    private void setMyControlListener2() {
+        sensitivityGR.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+
+            int progressChanged = 0;
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                progressChanged = progress;
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
     }
 }
