@@ -113,8 +113,8 @@ public class MainActivity extends Activity implements TextureView.SurfaceTexture
             int thresh2 = sensitivityGR.getProgress();
             int[] pixels = new int[bmp.getWidth()]; // pixels[] is the RGBA data
             int lineY = 100; // which row in the bitmap to analyze to read
-            for (int j = 0; j<bmp.getHeight()/3;j++){
-                lineY=j*3;
+            for (int j = 0; j<bmp.getHeight()/5;j++){
+                lineY=j*5;
                 bmp.getPixels(pixels, 0, bmp.getWidth(), 0, lineY, bmp.getWidth(), 1);
                 // in the row, see if there is more green than red
                 for (int i = 0; i < bmp.getWidth(); i++) {
