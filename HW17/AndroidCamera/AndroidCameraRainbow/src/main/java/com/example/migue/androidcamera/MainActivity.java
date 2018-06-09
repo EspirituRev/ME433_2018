@@ -39,8 +39,10 @@ public class MainActivity extends Activity implements TextureView.SurfaceTexture
     private Canvas canvas = new Canvas(bmp);
     private Paint paint1 = new Paint();
     private TextView mTextView;
-    SeekBar sensitivityGR;
-    SeekBar sensitivityGB;
+    SeekBar sensitivityR;
+    SeekBar sensitivityG;
+    SeekBar sensitivityB;
+    SeekBar sensitivityW;
 
 
     static long prevtime = 0; // for FPS calculation
@@ -49,11 +51,15 @@ public class MainActivity extends Activity implements TextureView.SurfaceTexture
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); // keeps the screen from turning off
-        sensitivityGR = (SeekBar)findViewById(R.id.seek1);
-        sensitivityGB = (SeekBar)findViewById(R.id.seek2);
+        sensitivityR = (SeekBar)findViewById(R.id.seek1);
+        sensitivityG = (SeekBar)findViewById(R.id.seek2);
+        sensitivityB = (SeekBar)findViewById(R.id.seek3);
+        sensitivityW = (SeekBar)findViewById(R.id.seek4);
         mTextView = (TextView) findViewById(R.id.cameraStatus);
         setMyControlListener1();
         setMyControlListener2();
+        setMyControlListener3();
+        setMyControlListener4();
 
         // see if the app has permission to use the camera
         ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CAMERA}, 1);
@@ -113,8 +119,10 @@ public class MainActivity extends Activity implements TextureView.SurfaceTexture
 
         final Canvas c = mSurfaceHolder.lockCanvas();
         if (c != null) {
-            int thresh1 = sensitivityGB.getProgress(); // comparison value
-            int thresh2 = sensitivityGR.getProgress();
+            int thresh1 = sensitivityR.getProgress(); // comparison value
+            int thresh2 = sensitivityG.getProgress();
+            int thresh3 = sensitivityB.getProgress();
+            int thresh4 = sensitivityW.getProgress();
             int[] pixels = new int[bmp.getWidth()]; // pixels[] is the RGBA data
             int lineY = 100; // which row in the bitmap to analyze to read
             sumx=1;
@@ -126,14 +134,18 @@ public class MainActivity extends Activity implements TextureView.SurfaceTexture
                 bmp.getPixels(pixels, 0, bmp.getWidth(), 0, lineY, bmp.getWidth(), 1);
                 // in the row, see if there is more green than red
                 for (int i = 0; i < bmp.getWidth(); i++) {
-                    if ((red(pixels[i])- green(pixels[i]))> thresh1) {
-                        if ((red(pixels[i])- blue(pixels[i]))> thresh2) {
+                  //  if ((red(pixels[i])- green(pixels[i]))> thresh1) {
+                    //    if ((red(pixels[i])- blue(pixels[i]))> thresh2) {
+                    if ((red(pixels[i])>thresh1||green(pixels[i])>thresh2||blue(pixels[i])>thresh3)||(red(pixels[i])-green(pixels[i])>thresh4&&
+                            red(pixels[i])-blue(pixels[i])>thresh4&&
+                            green(pixels[i])-blue(pixels[i])>thresh4)){
+
                             pixels[i] = rgb(0, 255, 0); // over write the pixel with pure green
                             sumx=i+sumx;
                             countx++;
                             sumy=j+sumy;
                             county++;
-                        }
+                        //}
                     }
                 }
                 // update the row
@@ -164,7 +176,7 @@ public class MainActivity extends Activity implements TextureView.SurfaceTexture
         prevtime = nowtime;
     }
     private void setMyControlListener1() {
-        sensitivityGB.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+        sensitivityR.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
             int progressChanged = 0;
 
@@ -184,7 +196,47 @@ public class MainActivity extends Activity implements TextureView.SurfaceTexture
         });
     }
     private void setMyControlListener2() {
-        sensitivityGR.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+        sensitivityG.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+
+            int progressChanged = 0;
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                progressChanged = progress;
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+    }
+    private void setMyControlListener3() {
+        sensitivityB.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+
+            int progressChanged = 0;
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                progressChanged = progress;
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+    }
+    private void setMyControlListener4() {
+        sensitivityR.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
             int progressChanged = 0;
 

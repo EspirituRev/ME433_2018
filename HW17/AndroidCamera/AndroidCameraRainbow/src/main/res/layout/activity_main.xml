@@ -5,6 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
@@ -28,7 +31,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sensitivity GR:"/>
+            android:text="Sensitivity R:"/>
         <SeekBar
             android:id="@+id/seek1"
             android:layout_width="fill_parent"
@@ -42,9 +45,37 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sensitivity GB:"/>
+            android:text="Sensitivity G:"/>
         <SeekBar
             android:id="@+id/seek2"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:progress="20"
+            android:secondaryProgress="20"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sensitivity B:"/>
+        <SeekBar
+            android:id="@+id/seek3"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:progress="20"
+            android:secondaryProgress="20"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sensitivity W:"/>
+        <SeekBar
+            android:id="@+id/seek4"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
@@ -60,5 +91,6 @@
             android:layout_height="480px" />
 
     </LinearLayout>
+    </ScrollView>
 
 </android.support.constraint.ConstraintLayout>
