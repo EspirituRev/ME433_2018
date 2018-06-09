@@ -80,7 +80,7 @@ public class MainActivity extends Activity implements TextureView.SurfaceTexture
         Camera.Parameters parameters = mCamera.getParameters();
         parameters.setPreviewSize(640, 480);
         parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_INFINITY); // no autofocusing
-        parameters.setAutoExposureLock(true); // keep the white balance constant
+        parameters.setAutoExposureLock(false); // keep the white balance constant
         mCamera.setParameters(parameters);
         mCamera.setDisplayOrientation(90); // rotate to portrait mode
 
@@ -106,6 +106,10 @@ public class MainActivity extends Activity implements TextureView.SurfaceTexture
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
         // every time there is a new Camera preview frame
         mTextureView.getBitmap(bmp);
+        int sumx=1;
+        int countx=1;
+        int sumy=1;
+        int county=1;
 
         final Canvas c = mSurfaceHolder.lockCanvas();
         if (c != null) {
@@ -113,14 +117,22 @@ public class MainActivity extends Activity implements TextureView.SurfaceTexture
             int thresh2 = sensitivityGR.getProgress();
             int[] pixels = new int[bmp.getWidth()]; // pixels[] is the RGBA data
             int lineY = 100; // which row in the bitmap to analyze to read
-            for (int j = 0; j<bmp.getHeight()/5;j++){
-                lineY=j*5;
+            sumx=1;
+            countx=1;
+            sumy=1;
+            county=1;
+            for (int j = 0; j<bmp.getHeight()/10;j++){
+                lineY=j*10;
                 bmp.getPixels(pixels, 0, bmp.getWidth(), 0, lineY, bmp.getWidth(), 1);
                 // in the row, see if there is more green than red
                 for (int i = 0; i < bmp.getWidth(); i++) {
-                    if ((green(pixels[i])- red(pixels[i]))> thresh1) {
-                        if ((green(pixels[i])- blue(pixels[i]))> thresh2) {
+                    if ((red(pixels[i])- green(pixels[i]))> thresh1) {
+                        if ((red(pixels[i])- blue(pixels[i]))> thresh2) {
                             pixels[i] = rgb(0, 255, 0); // over write the pixel with pure green
+                            sumx=i+sumx;
+                            countx++;
+                            sumy=j+sumy;
+                            county++;
                         }
                     }
                 }
@@ -131,14 +143,17 @@ public class MainActivity extends Activity implements TextureView.SurfaceTexture
 
 
 
-        }
 
+        }
+        int posx=sumx/countx;
+        int posy=sumy/county*10;
         // draw a circle at some position
-        int pos = 50;
-        canvas.drawCircle(pos, 240, 5, paint1); // x position, y position, diameter, color
+        int pos=50;
+        canvas.drawCircle(posx,posy, 5, paint1); // x position, y position, diameter, color
 
         // write the pos as text
-        canvas.drawText("pos = " + pos, 10, 200, paint1);
+        canvas.drawText("posx = " + posx, 10, 200, paint1);
+        canvas.drawText("posy = " + posy, 10, 300, paint1);
         c.drawBitmap(bmp, 0, 0, null);
         mSurfaceHolder.unlockCanvasAndPost(c);
 

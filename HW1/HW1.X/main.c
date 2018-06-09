@@ -36,7 +36,10 @@
 #pragma config FUSBIDIO = ON // USB pins controlled by USB module
 #pragma config FVBUSONIO = ON // USB BUSON controlled by USB module
 
-#define TEST1   LATAbits.LATA4
+#define TEST1   LATAbits.LATA0
+#define TEST3   LATAbits.LATA4
+#define TEST2   LATBbits.LATB13
+
 #define PB1     PORTBbits.RB4
 
 int main() 
@@ -57,29 +60,35 @@ int main()
     DDPCONbits.JTAGEN = 0;
 
     // do your TRIS and LAT commands here
+    TRISAbits.TRISA0 = 0;
     TRISAbits.TRISA4 = 0;
+    TRISBbits.TRISB13 = 0;
     
     TRISBbits.TRISB4 = 1;
     
     __builtin_enable_interrupts();
     
     int time;
-    time = 12000;
+    time = 6000;
     _CP0_SET_COUNT(0);
 
     while(1) 
     {
         if(PB1==1)
         {
-            if(_CP0_GET_COUNT()>time)
+            if(_CP0_GET_COUNT()>2*time)
             {
                 TEST1 = 1;
+                TEST2 = 1;
+                TEST3 = 1;
             }
-            if(_CP0_GET_COUNT()<time)
+            if(_CP0_GET_COUNT()<2*time)
             {
                 TEST1 = 0;
+                TEST2 = 0;
+                TEST3 = 0;
             }
-            if(_CP0_GET_COUNT()>2*time)
+            if(_CP0_GET_COUNT()>3*time)
             {
             _CP0_SET_COUNT(0);
             }
@@ -87,6 +96,8 @@ int main()
         else
         {
             TEST1=0;
+            TEST2 = 0;
+            TEST3 = 0;
             //_CP0_SET_COUNT(0);
         }
     }
