@@ -478,7 +478,7 @@ void APP_Tasks(void) {
              * The isReadComplete flag gets updated in the CDC event handler. */
 
              /* WAIT FOR 5HZ TO PASS OR UNTIL A LETTER IS RECEIVED */
-            if (gotRx || _CP0_GET_COUNT() - startTime > (48000000 / 2 / 5)) {
+            if (gotRx || _CP0_GET_COUNT() - startTime > (48000000 / 2 / 40)) {
                 appData.state = APP_STATE_SCHEDULE_WRITE;
             }
 
@@ -515,7 +515,7 @@ void APP_Tasks(void) {
                 gotRx = 0;
             } else {
                 len = sprintf(dataOut, "%d\r\n", i);
-                i++;
+                //i++;
                 USB_DEVICE_CDC_Write(USB_DEVICE_CDC_INDEX_0,
                         &appData.writeTransferHandle, dataOut, len,
                         USB_DEVICE_CDC_TRANSFER_FLAGS_DATA_COMPLETE);

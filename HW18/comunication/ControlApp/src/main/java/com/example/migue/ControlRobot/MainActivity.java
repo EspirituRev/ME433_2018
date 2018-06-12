@@ -5,24 +5,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
-
 import com.hoho.android.usbserial.driver.CdcAcmSerialDriver;
 import com.hoho.android.usbserial.driver.ProbeTable;
 import com.hoho.android.usbserial.driver.UsbSerialDriver;
 import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.hoho.android.usbserial.driver.UsbSerialProber;
 import com.hoho.android.usbserial.util.SerialInputOutputManager;
-
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -34,22 +29,16 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
-import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.WindowManager;
-import android.widget.TextView;
-import android.widget.SeekBar;
-
-import java.io.IOException;
-
 import static android.graphics.Color.blue;
 import static android.graphics.Color.green;
 import static android.graphics.Color.red;
-import static android.graphics.Color.rgb;
+
 
 public class MainActivity extends Activity implements TextureView.SurfaceTextureListener {
     private Camera mCamera;
@@ -96,7 +85,7 @@ public class MainActivity extends Activity implements TextureView.SurfaceTexture
         myTextView3 = (TextView) findViewById(R.id.textView03);
         button = (Button) findViewById(R.id.button1);
 
-        setMyControlListener();
+
         setMyControlListener1();
         setMyControlListener2();
         setMyControlListener3();
@@ -121,32 +110,6 @@ public class MainActivity extends Activity implements TextureView.SurfaceTexture
         }
         manager = (UsbManager) getSystemService(Context.USB_SERVICE);
     }
-
-
-    /*protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-
-
-
-
-
-
-
-
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                myTextView2.setText("value on click is "+myControl.getProgress());
-                String sendString = String.valueOf(myControl.getProgress()) + '\n';
-                try {
-                    sPort.write(sendString.getBytes(), 10); // 10 is the timeout
-                } catch (IOException e) { }
-            }
-        });
-
-    }*/
 
 
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
@@ -197,18 +160,15 @@ public class MainActivity extends Activity implements TextureView.SurfaceTexture
             countx=1;
             sumy=1;
             county=1;
-            for (int j = 0; j<bmp.getHeight()/10;j++){
-                lineY=j*10;
+            for (int j = 0; j<bmp.getHeight()/20;j++){
+                lineY=j*20;
                 bmp.getPixels(pixels, 0, bmp.getWidth(), 0, lineY, bmp.getWidth(), 1);
                 // in the row, see if there is more green than red
                 for (int i = 0; i < bmp.getWidth(); i++) {
                     if ((red(pixels[i])- green(pixels[i]))> thresh1) {
                        if ((red(pixels[i])- blue(pixels[i]))> thresh2) {
-                    //if ((red(pixels[i])>thresh1||green(pixels[i])>thresh2||blue(pixels[i])>thresh3)||(red(pixels[i])-green(pixels[i])>thresh4&&
-                     //       red(pixels[i])-blue(pixels[i])>thresh4&&
-                       //     green(pixels[i])-blue(pixels[i])>thresh4)){
 
-                        pixels[i] = rgb(0, 255, 0); // over write the pixel with pure green
+                        //pixels[i] = rgb(0, 255, 0); // over write the pixel with pure green
                         sumx=i+sumx;
                         countx++;
                         sumy=j+sumy;
@@ -221,9 +181,9 @@ public class MainActivity extends Activity implements TextureView.SurfaceTexture
             }
         }
         int posx=sumx/countx;
-        int posy=sumy/county*10;
+        int posy=sumy/county*20;
         if(posx<10){posx=0;}
-        if(posx>630){posx=640;}
+        if(posx>630){posx=635;}
         // draw a circle at some position
         int pos=50;
         canvas.drawCircle(posx,posy, 5, paint1); // x position, y position, diameter, color
@@ -324,30 +284,7 @@ public class MainActivity extends Activity implements TextureView.SurfaceTexture
         });
     }
 
-    //usb controllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll;
-    private void setMyControlListener() {
-        myControl.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-
-            int progressChanged = 0;
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                progressChanged = progress;
-                myTextView.setText("The value is: "+progress);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-
-            }
-
-        });
-    }
+    //usb controllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll;
     private final SerialInputOutputManager.Listener mListener =
             new SerialInputOutputManager.Listener() {
                 @Override
@@ -444,31 +381,6 @@ public class MainActivity extends Activity implements TextureView.SurfaceTexture
     }
     private void updateReceivedData(byte[] data) {
         //do something with received data
-
-        //for displaying:
-        String rxString = null;
-        try {
-            rxString = new String(data, "UTF-8"); // put the data you got into a string
-            myTextView3.append(rxString);
-            myScrollView.fullScroll(View.FOCUS_DOWN);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
     }
 
 }
-
-
-/*
-public class MainActivity extends AppCompatActivity {
-
-
-
-
-
-
-
-
-
-
-}*/

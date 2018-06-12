@@ -63,15 +63,17 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 #include "app.h"
 #include "system_definitions.h"
 int error;
-int kp=5;
-int MAX_DUTY=1500;
+
+int MAX_DUTYL=600;
+int MAX_DUTYR=600;
 int left=0;
 int right=0;
 extern volatile int rxVal;
-int valmed=320;
-int tolerance=60;
+int valmed=300;
+int tolerance=40;
 int erp=0;
 int ern=0;
+int kp=3;
 
 // *****************************************************************************
 // *****************************************************************************
@@ -91,25 +93,37 @@ void __ISR(_TIMER_4_VECTOR, IPL4SOFT) Timer4ISR(void) {
 //    
     error = rxVal - valmed; // 240 means the dot is in the middle of the screen
     if (error>=-tolerance&&error<=tolerance){
-        left=MAX_DUTY;
-        right=MAX_DUTY;
+        left=MAX_DUTYL;
+        right=MAX_DUTYR;
     }
     
     if(error>tolerance) { // slow down the right motor to steer to the right
         erp=error-tolerance;
-        right = MAX_DUTY - kp*erp;
-        left = MAX_DUTY;
-        if (right<0) {
+        if(error>125){
             right = 0;
+            left = MAX_DUTYL;
+        }
+        else{
+            right = MAX_DUTYR - kp*erp;
+            left = MAX_DUTYL;
+            if (right<0) {
+                right = 0;
+            }
         }
     }
     
     if (error<-tolerance) { // slow down the left motor to steer to the left
         ern  = -(error+tolerance);
-        left = MAX_DUTY - kp*ern;
-        right = MAX_DUTY;
-        if (left < 0){
+        if (error<-125){
             left = 0;
+            right = MAX_DUTYR;
+        }
+        else{
+            left = MAX_DUTYL - kp*ern;
+            right = MAX_DUTYR;
+            if (left < 0){
+                left = 0;
+            }
         }
     }
     
