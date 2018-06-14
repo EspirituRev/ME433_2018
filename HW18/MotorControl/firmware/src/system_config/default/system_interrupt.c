@@ -64,16 +64,16 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 #include "system_definitions.h"
 int error;
 
-int MAX_DUTYL=600;
-int MAX_DUTYR=600;
+int MAX_DUTYL=650;
+int MAX_DUTYR=650;
 int left=0;
 int right=0;
 extern volatile int rxVal;
-int valmed=300;
-int tolerance=40;
+int valmed=280;
+int tolerance=5;
 int erp=0;
 int ern=0;
-int kp=3;
+int kp=2.5;
 
 // *****************************************************************************
 // *****************************************************************************

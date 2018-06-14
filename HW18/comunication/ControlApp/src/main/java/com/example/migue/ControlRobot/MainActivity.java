@@ -160,8 +160,8 @@ public class MainActivity extends Activity implements TextureView.SurfaceTexture
             countx=1;
             sumy=1;
             county=1;
-            for (int j = 0; j<bmp.getHeight()/20;j++){
-                lineY=j*20;
+            for (int j = 0; j<bmp.getHeight()/40;j++){
+                lineY=j*40;
                 bmp.getPixels(pixels, 0, bmp.getWidth(), 0, lineY, bmp.getWidth(), 1);
                 // in the row, see if there is more green than red
                 for (int i = 0; i < bmp.getWidth(); i++) {
@@ -181,11 +181,11 @@ public class MainActivity extends Activity implements TextureView.SurfaceTexture
             }
         }
         int posx=sumx/countx;
-        int posy=sumy/county*20;
+        int posy=sumy/county*40;
         if(posx<10){posx=0;}
         if(posx>630){posx=635;}
         // draw a circle at some position
-        int pos=50;
+        int pos=40;
         canvas.drawCircle(posx,posy, 5, paint1); // x position, y position, diameter, color
 
         // write the pos as text
